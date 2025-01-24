@@ -50,4 +50,15 @@ min_date = all_df["dteday"].min()
 max_date = all_df["dteday"].max()
 
 with st.sidebar:
-    st.image("https://github.com/ilhamarifinsamsul/final-project-analisis-data/raw/main/asset/bike.png", width=100)
+    st.image("https://github.com/ilhamarifinsamsul/final-project-analisis-data/raw/main/asset/bike.png", width=200)
+    
+    start_date, end_date = st.date_input(
+        label='Rentang Waktu', min_value=min_date,
+        max_value=max_date,
+        value=[min_date, max_date]
+    )
+    
+    
+st.header('Ilham Bike :sparkles:')
+
+
