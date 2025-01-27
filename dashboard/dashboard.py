@@ -20,7 +20,7 @@ def create_registered_df(df):
 def create_bymnth_df(df):
     bymnth_df = df.groupby(by="dteday").mnth_x.nunique().reset_index()
     bymnth_df.rename(columns={
-        "mnth_x": "Musim"
+        "mnth_x": "bulan",
     }, inplace=True)
     
     return bymnth_df
@@ -91,21 +91,42 @@ st.pyplot(fig)
 st.subheader("Rent Demographic")
 
 col1, col2 = st.columns(2)
-colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
 
 with col1:
-    fig, ax = plt.subplots(figsize=(20, 10))
- 
-    sns.barplot(
-        y="dteday", 
-        x="season_x",
-        data=bymnth_df.sort_values(by="dteday", ascending=False),
-        palette=colors,
-        ax=ax
-    )
-    ax.set_title("Number of Rent by mnth", loc="center", fontsize=50)
-    ax.set_ylabel(None)
-    ax.set_xlabel(None)
-    ax.tick_params(axis='x', labelsize=35)
-    ax.tick_params(axis='y', labelsize=30)
-    st.pyplot(fig)
+    total_mnth = bymnth_df.bulan.sum()
+    st.metric("Berdasarkan Pengguna per bulan", value=total_mnth)
+
+fig, ax = plt.subplots(figsize=(16, 8))
+ax.plot(
+    bymnth_df["dteday"],
+    bymnth_df["bulan"],
+    marker='o', 
+    linewidth=2,
+    color="#90CAF9"
+)
+ax.tick_params(axis='y', labelsize=20)
+ax.tick_params(axis='x', labelsize=15)
+
+st.pyplot(fig)
+
+
+st.subheader("Rent Demographic")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    total_rfn = rfm_df.season.sum()
+    st.metric("Berdasarkan Pengguna per cuaca", value=total_rfn)
+
+fig, ax = plt.subplots(figsize=(16, 8))
+ax.plot(
+    rfm_df["dteday"],
+    rfm_df["season"],
+    marker='o', 
+    linewidth=2,
+    color="#90CAF9"
+)
+ax.tick_params(axis='y', labelsize=20)
+ax.tick_params(axis='x', labelsize=15)
+
+st.pyplot(fig)
