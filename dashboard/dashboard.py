@@ -17,22 +17,39 @@ def create_registered_df(df):
     
     return registered_df
 
+
 def create_bymnth_df(df):
-    bymnth_df = df.groupby(by="dteday").mnth_x.nunique().reset_index()
-    bymnth_df.rename(columns={
-        "mnth_x": "bulan",
-    }, inplace=True)
-    
+    bymnth_df = df.groupby(by="dteday").mnth_x.sum().sort_values(ascending=False).reset_index()
+
     return bymnth_df
 
-def create_rfm_df(df):
-    rfm_df = df.groupby(by="dteday", as_index=False).agg({
-        "weathersit_x": "nunique", #mengambil data cuaca
-        "season_x": "nunique",
+def create_bycnt_df(df):
+    bycnt = df.groupby(by="dteday").cnt_x.sum().sort_values(ascending=False).reset_index()
+
+    return bycnt
+
+def create_weekday_df(df):
+    weekday_df = df.resample(rule='M', on='dteday').agg({
+        "weekday_x": "sum"
     })
-    rfm_df.columns = ["dteday", "weathersit", "season"]
+    weekday_df = weekday_df.reset_index()
+    weekday_df.rename(columns={
+        "weekday_x": "rent_weekday"
+    }, inplace=True)
     
-    return rfm_df
+    return weekday_df
+
+def create_byholiday_df(df):
+    byholiday_df = df.resample(rule='M', on='dteday').agg({
+        "holiday_x": "sum"
+    })
+    byholiday_df = byholiday_df.reset_index()
+    byholiday_df.rename(columns={
+        "holiday_x": "rent_holiday"
+    }, inplace=True)
+    
+    return byholiday_df
+
 
 # Load berkas all_data
 all_df = pd.read_csv("all_data.csv")
@@ -61,7 +78,9 @@ main_df = all_df[(all_df["dteday"] >= str(start_date)) & (all_df["dteday"] <= st
 
 registered_df = create_registered_df(main_df)
 bymnth_df = create_bymnth_df(main_df)
-rfm_df = create_rfm_df(main_df)
+bycnt = create_bycnt_df(main_df)
+byweekday = create_weekday_df(main_df)
+byholiday = create_byholiday_df(main_df)
     
     
 st.header('Ilham Bike :sparkles:')
@@ -88,45 +107,95 @@ ax.tick_params(axis='x', labelsize=15)
 st.pyplot(fig)
 
 
-st.subheader("Rent Demographic")
+st.subheader("Best Rental Berdasarkan Bulan")
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(35,15))
+
+colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
+
+sns.barplot(x="mnth_x", y="dteday", data=bymnth_df.head(5), palette=colors, ax=ax[0])
+ax[0].set_ylabel(None)
+ax[0].set_xlabel("Number of Rent:", fontsize=30)
+ax[0].set_title("Best Rent Per Bulan", loc="center", fontsize=50)
+ax[0].tick_params(axis='y', labelsize=35)
+ax[0].tick_params(axis='x', labelsize=30)
+
+sns.barplot(x="mnth_x", y="dteday", data=bymnth_df.sort_values(by="mnth_x", ascending=True).head(5), palette=colors, ax=ax[1])
+ax[1].set_ylabel(None)
+ax[1].set_xlabel("Number of Rent", fontsize=30)
+ax[1].invert_xaxis()
+ax[1].yaxis.set_label_position("right")
+ax[1].yaxis.tick_right()
+ax[1].set_title("Best Rent Per Bulan", loc="center", fontsize=50)
+ax[1].tick_params(axis='y', labelsize=35)
+ax[1].tick_params(axis='x', labelsize=30)
+ 
+st.pyplot(fig)
+
+
+st.subheader("Rent Berdasarkan CNT")
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(35,15))
+
+colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
+
+sns.barplot(x="cnt_x", y="dteday", data=bycnt.head(5), palette=colors, ax=ax[0])
+ax[0].set_ylabel(None)
+ax[0].set_xlabel("Number of Rent:", fontsize=30)
+ax[0].set_title("Best Rent Per cnt", loc="center", fontsize=50)
+ax[0].tick_params(axis='y', labelsize=35)
+ax[0].tick_params(axis='x', labelsize=30)
+
+sns.barplot(x="cnt_x", y="dteday", data=bycnt.sort_values(by="cnt_x", ascending=True).head(5), palette=colors, ax=ax[1])
+ax[1].set_ylabel(None)
+ax[1].set_xlabel("Number of cnt", fontsize=30)
+ax[1].invert_xaxis()
+ax[1].yaxis.set_label_position("right")
+ax[1].yaxis.tick_right()
+ax[1].set_title("Best cnt Per cnt", loc="center", fontsize=50)
+ax[1].tick_params(axis='y', labelsize=35)
+ax[1].tick_params(axis='x', labelsize=30)
+ 
+st.pyplot(fig)
+
+st.subheader('Pengguna per Weekday')
 
 col1, col2 = st.columns(2)
 
 with col1:
-    total_mnth = bymnth_df.bulan.sum()
-    st.metric("Berdasarkan Pengguna per bulan", value=total_mnth)
+    total_week = byweekday.rent_weekday.sum()
+    st.metric("Weekday", value=total_week)
 
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
-    bymnth_df["dteday"],
-    bymnth_df["bulan"],
+    byweekday["dteday"],
+    byweekday["rent_weekday"],
     marker='o', 
     linewidth=2,
     color="#90CAF9"
 )
 ax.tick_params(axis='y', labelsize=20)
 ax.tick_params(axis='x', labelsize=15)
-
+ 
 st.pyplot(fig)
 
-
-st.subheader("Rent Demographic")
+st.subheader('Pengguna per holiday')
 
 col1, col2 = st.columns(2)
 
 with col1:
-    total_rfn = rfm_df.season.sum()
-    st.metric("Berdasarkan Pengguna per cuaca", value=total_rfn)
+    total_holiday = byholiday.rent_holiday.sum()
+    st.metric("holiday", value=total_holiday)
 
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
-    rfm_df["dteday"],
-    rfm_df["season"],
+    byholiday["dteday"],
+    byholiday["rent_holiday"],
     marker='o', 
     linewidth=2,
     color="#90CAF9"
 )
 ax.tick_params(axis='y', labelsize=20)
 ax.tick_params(axis='x', labelsize=15)
-
+ 
 st.pyplot(fig)
+
+st.caption('Copyright (c) Ilham Arifin 2023')
