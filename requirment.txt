@@ -1,0 +1,11 @@
+Pada project ini saya mengambil dataset bike yang diantaranya ada data day & hour
+Untuk library yang digunakan:
+1. Pandas
+2. Matplotlib
+3. Seaborn
+4. Streamlit
+
+Untuk pertanyaan analisinya
+1. Ada berapakah jumlah pengguna yang melakukan registrasi?
+2. Berapakah jumlah pengguna saat weekday?
+3. Berapakah jumlah pengguna saat holiday?
