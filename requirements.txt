@@ -6,8 +6,3 @@ numpy==1.25.2
 pandas==2.1.4
 seaborn==0.13.0
 streamlit==1.30.0
-
-Untuk pertanyaan analisinya
-1. Ada berapakah jumlah pengguna yang melakukan registrasi?
-2. Berapakah jumlah pengguna saat weekday?
-3. Berapakah jumlah pengguna saat holiday?
