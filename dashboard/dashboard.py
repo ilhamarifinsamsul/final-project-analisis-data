@@ -121,41 +121,14 @@ ax[1].tick_params(axis='x', labelsize=30)
  
 st.pyplot(fig)
 
-st.subheader("Best Rental Berdasarkan Season")
 
-byseason_df = all_df.groupby(by="dteday").season_x.sum().sort_values(ascending=False).reset_index()
-
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(35,15))
-
-colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
-
-sns.barplot(x="season_x", y="dteday", data=byseason_df.head(5), palette=colors, ax=ax[0])
-ax[0].set_ylabel(None)
-ax[0].set_xlabel("Number of Rent:", fontsize=30)
-ax[0].set_title("Best Rent Per Season", loc="center", fontsize=50)
-ax[0].tick_params(axis='y', labelsize=35)
-ax[0].tick_params(axis='x', labelsize=30)
-
-sns.barplot(x="season_x", y="dteday", data=byseason_df.sort_values(by="season_x", ascending=True).head(5), palette=colors, ax=ax[1])
-ax[1].set_ylabel(None)
-ax[1].set_xlabel("Number of Rent", fontsize=30)
-ax[1].invert_xaxis()
-ax[1].yaxis.set_label_position("right")
-ax[1].yaxis.tick_right()
-ax[1].set_title("Best Rent Per Season", loc="center", fontsize=50)
-ax[1].tick_params(axis='y', labelsize=35)
-ax[1].tick_params(axis='x', labelsize=30)
-
-st.pyplot(fig)
-
-
-st.subheader('Pengguna per Weekday')
+st.subheader('Pertumbuhan pengguna dari tahun ke tahun')
 
 col1, col2 = st.columns(2)
 
 with col1:
     total_week = byweekday.rent_weekday.sum()
-    st.metric("Weekday", value=total_week)
+    st.metric("Pengguna", value=total_week)
 
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
