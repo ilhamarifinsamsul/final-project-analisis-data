@@ -1,6 +1,3 @@
-Pada project ini saya mengambil dataset bike yang diantaranya ada data day & hour
-Untuk library yang digunakan:
-
 matplotlib==3.8.0
 numpy==1.25.2
 pandas==2.1.4
